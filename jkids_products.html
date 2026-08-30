@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jkids 프리미엄 가격 레이더 - 실시간 아동복 가격 추적 및 재고 변동 알림">
-    <title>JKIDS PRICE RADAR - 2026.08.30 19:24</title>
+    <title>JKIDS PRICE RADAR - 2026.08.30 20:18</title>
     
     <!-- Modern Web Fonts (Pretendard & Inter) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -810,7 +810,7 @@
             <div class="nav-actions">
                 <div class="live-indicator">
                     <span class="pulse-dot"></span>
-                    <span>2026.08.30 19:24 기준</span>
+                    <span>2026.08.30 20:18 기준</span>
                 </div>
                 <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="테마 전환">
                     <i class="fas fa-moon"></i>
@@ -1260,17 +1260,88 @@
                             legend: { display: false },
                             tooltip: {
                                 enabled: true,
-                                backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.92)',
-                                padding: 8,
+                                backgroundColor: function() {
+                                    return document.documentElement.getAttribute('data-theme') === 'dark'
+                                        ? 'rgba(15, 23, 42, 0.96)'
+                                        : 'rgba(255, 255, 255, 0.98)';
+                                },
+                                titleColor: function() {
+                                    return document.documentElement.getAttribute('data-theme') === 'dark'
+                                        ? '#94a3b8'
+                                        : '#64748b';
+                                },
+                                titleFont: { family: "'Pretendard', 'Inter', sans-serif", size: 11, weight: '600' },
+                                titleSpacing: 3,
+                                titleMarginBottom: 6,
+                                bodyColor: function() {
+                                    return document.documentElement.getAttribute('data-theme') === 'dark'
+                                        ? '#f8fafc'
+                                        : '#0f172a';
+                                },
+                                bodyFont: { family: "'Pretendard', 'Inter', sans-serif", size: 12, weight: '700' },
+                                bodySpacing: 5,
+                                borderColor: function() {
+                                    return document.documentElement.getAttribute('data-theme') === 'dark'
+                                        ? 'rgba(255, 255, 255, 0.15)'
+                                        : 'rgba(203, 213, 225, 0.85)';
+                                },
+                                borderWidth: 1,
+                                padding: { top: 8, bottom: 8, left: 11, right: 11 },
                                 cornerRadius: 8,
+                                displayColors: true,
+                                usePointStyle: true,
+                                boxWidth: 6,
+                                boxHeight: 6,
+                                boxPadding: 5,
                                 callbacks: {
+                                    title: function(items) {
+                                        if (!items || items.length === 0) return '';
+                                        const idx = items[0].dataIndex;
+                                        const rawDate = priceData[idx] ? priceData[idx].recorded_at : null;
+                                        if (rawDate) {
+                                            const d = new Date(rawDate);
+                                            if (!isNaN(d.getTime())) {
+                                                const m = d.getMonth() + 1;
+                                                const day = d.getDate();
+                                                const h = String(d.getHours()).padStart(2, '0');
+                                                const min = String(d.getMinutes()).padStart(2, '0');
+                                                return `${m}월 ${day}일 ${h}:${min}`;
+                                            }
+                                        }
+                                        return items[0].label;
+                                    },
                                     label: function(context) {
                                         if (context.datasetIndex === 0) {
-                                            return '💰 가격: ' + context.parsed.y.toLocaleString() + '원';
+                                            return ` 가격  ${context.parsed.y.toLocaleString()}원`;
                                         } else {
                                             const s = context.parsed.y;
-                                            return s === 0 ? '📦 재고: 품절' : '📦 재고: ' + s.toLocaleString() + '개';
+                                            return s === 0 ? ' 재고  품절 (0개)' : ` 재고  ${s.toLocaleString()}개`;
                                         }
+                                    },
+                                    labelColor: function(context) {
+                                        if (context.datasetIndex === 0) {
+                                            return {
+                                                borderColor: trendColor,
+                                                backgroundColor: trendColor,
+                                                borderWidth: 1,
+                                                borderRadius: 3
+                                            };
+                                        } else {
+                                            const isSoldOut = context.parsed.y === 0;
+                                            const stockColor = isSoldOut ? '#ef4444' : '#6366f1';
+                                            return {
+                                                borderColor: stockColor,
+                                                backgroundColor: stockColor,
+                                                borderWidth: 1,
+                                                borderRadius: 3
+                                            };
+                                        }
+                                    },
+                                    labelTextColor: function(context) {
+                                        if (context.datasetIndex === 1 && context.parsed.y === 0) {
+                                            return '#ef4444';
+                                        }
+                                        return (document.documentElement.getAttribute('data-theme') === 'dark') ? '#f8fafc' : '#0f172a';
                                     }
                                 }
                             }

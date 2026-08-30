@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jkids 프리미엄 가격 레이더 - 실시간 아동복 가격 추적 및 재고 변동 알림">
-    <title>JKIDS PRICE RADAR - 2026.08.30 20:25</title>
+    <title>JKIDS PRICE RADAR - 2026.08.30 20:27</title>
     
     <!-- Modern Web Fonts (Pretendard & Inter) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -965,7 +965,7 @@
             <div class="nav-actions">
                 <div class="live-indicator">
                     <span class="pulse-dot"></span>
-                    <span>2026.08.30 20:25 기준</span>
+                    <span>2026.08.30 20:27 기준</span>
                 </div>
                 <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="테마 전환">
                     <i class="fas fa-moon"></i>
@@ -1086,7 +1086,7 @@
                 size: 'all',
                 sort: 'default'
             },
-            charts: new Set()
+            charts: new Map() // canvasId -> ChartInstance
         };
         
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1105,11 +1105,52 @@
             if (icon) {
                 icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
             }
+            updateChartsTheme();
         }
         
         function toggleTheme() {
             const current = document.documentElement.getAttribute('data-theme') || 'light';
             setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+        
+        function updateChartsTheme() {
+            if (!STATE.charts || STATE.charts.size === 0) return;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)';
+            const tickColor = isDark ? '#64748b' : '#94a3b8';
+            
+            STATE.charts.forEach(chart => {
+                try {
+                    if (chart && chart.options && chart.options.scales) {
+                        if (chart.options.scales.x && chart.options.scales.x.ticks) {
+                            chart.options.scales.x.ticks.color = tickColor;
+                        }
+                        if (chart.options.scales.y) {
+                            if (chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
+                            if (chart.options.scales.y.ticks) chart.options.scales.y.ticks.color = tickColor;
+                        }
+                        chart.update('none');
+                    }
+                } catch (e) {
+                    console.warn('Error updating chart theme:', e);
+                }
+            });
+        }
+        
+        function clearExistingCharts() {
+            if (chartObserver) {
+                chartObserver.disconnect();
+            }
+            STATE.charts.forEach((chart, id) => {
+                try {
+                    if (chart && typeof chart.destroy === 'function') {
+                        chart.destroy();
+                    }
+                } catch (e) {
+                    console.warn('Error destroying chart instance:', e);
+                }
+            });
+            STATE.charts.clear();
         }
         
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1163,6 +1204,9 @@
             STATE.filteredProducts = filtered;
             STATE.currentPage = 0;
             STATE.displayedProducts = [];
+            
+            // 이전 차트 인스턴스 완전 파괴 및 옵저버 리셋
+            clearExistingCharts();
             
             // 그리드 초기화
             const grid = document.getElementById('productsGrid');
@@ -1396,18 +1440,38 @@
                             observer.unobserve(canvas);
                         }
                     });
-                }, { rootMargin: '100px', threshold: 0.05 });
+                }, { rootMargin: '250px', threshold: 0.01 });
             }
             
-            document.querySelectorAll('canvas[id^="chart-"]').forEach(canvas => {
+            const allCanvases = document.querySelectorAll('canvas[id^="chart-"]');
+            const vHeight = window.innerHeight || document.documentElement.clientHeight;
+            
+            allCanvases.forEach(canvas => {
                 if (!STATE.charts.has(canvas.id)) {
-                    chartObserver.observe(canvas);
+                    const rect = canvas.getBoundingClientRect();
+                    // 뷰포트 내(또는 인접한 영역)에 이미 존재하는 카드는 즉시 렌더링 (탭 전환 지연/누락 완벽 방지)
+                    if (rect.top < vHeight + 200 && rect.bottom > -200) {
+                        renderChart(canvas);
+                    } else {
+                        chartObserver.observe(canvas);
+                    }
                 }
             });
         }
         
         function renderChart(canvas) {
             try {
+                // 이전 차트 인스턴스 중복 방지 및 메모리 해제
+                if (typeof Chart.getChart === 'function') {
+                    const existingChart = Chart.getChart(canvas);
+                    if (existingChart) existingChart.destroy();
+                }
+                if (STATE.charts.has(canvas.id)) {
+                    const inst = STATE.charts.get(canvas.id);
+                    if (inst && typeof inst.destroy === 'function') inst.destroy();
+                    STATE.charts.delete(canvas.id);
+                }
+                
                 const priceData = JSON.parse(canvas.dataset.priceData);
                 const trendColor = canvas.dataset.trendColor || '#64748b';
                 const ctx = canvas.getContext('2d');
@@ -1606,7 +1670,7 @@
                     }
                 });
                 
-                STATE.charts.add(canvas.id);
+                STATE.charts.set(canvas.id, chart);
             } catch (error) {
                 console.error('Chart rendering error:', error);
             }

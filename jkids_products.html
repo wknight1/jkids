@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jkids 프리미엄 가격 레이더 - 실시간 아동복 가격 추적 및 재고 변동 알림">
-    <title>JKIDS PRICE RADAR - 2026.10.09 01:43</title>
+    <title>JKIDS PRICE RADAR - 2026.10.09 14:58</title>
     
     <!-- Modern Web Fonts (Pretendard & Inter) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -685,24 +685,34 @@
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-xl);
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.15rem;
             margin-bottom: 1.25rem;
             box-shadow: var(--shadow-lg);
             display: flex;
-            align-items: center;
-            gap: 0.85rem;
+            flex-direction: column;
+            gap: 0.7rem;
             transition: var(--transition-smooth);
+        }
+        
+        /* 1st Row: Search & Sort */
+        .controls-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            width: 100%;
         }
         
         /* Search Box */
         .search-box-wrapper {
             position: relative;
-            flex: 0 0 260px;
+            flex: 1;
+            max-width: 460px;
         }
         
         .search-icon {
             position: absolute;
-            left: 0.9rem;
+            left: 0.95rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-tertiary);
@@ -713,7 +723,7 @@
         .search-input {
             width: 100%;
             height: 38px;
-            padding: 0 2rem 0 2.3rem;
+            padding: 0 2rem 0 2.4rem;
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-pill);
@@ -746,38 +756,96 @@
             display: block;
         }
         
+        /* 2nd Row: Full-Width Size Filter Bar with Navigation */
+        .controls-size-row {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 0.4rem;
+        }
+        
+        .size-scroll-nav-btn {
+            flex: 0 0 28px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: var(--transition-smooth);
+            z-index: 2;
+        }
+        
+        .size-scroll-nav-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+            transform: scale(1.08);
+        }
+        
+        .size-scroll-nav-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none;
+        }
+        
         /* Size Filter Chips (Horizontal Scrollable) */
         .size-chips-wrapper {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
             overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            padding: 2px 0;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+            padding: 3px 2px;
+            -webkit-overflow-scrolling: touch;
         }
         
         .size-chips-wrapper::-webkit-scrollbar {
-            display: none;
+            height: 4px;
+        }
+        
+        .size-chips-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .size-chips-wrapper::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
         }
         
         .size-chip {
             white-space: nowrap;
-            padding: 0.4rem 0.75rem;
+            padding: 0.4rem 0.8rem;
             border-radius: var(--radius-pill);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-weight: 600;
             border: 1px solid var(--border-color);
             background: var(--bg-surface);
             color: var(--text-secondary);
             cursor: pointer;
             transition: var(--transition-smooth);
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
         
         .size-chip:hover {
             background: var(--bg-subtle);
             color: var(--text-primary);
+            border-color: var(--primary);
+            transform: translateY(-1px);
         }
         
         .size-chip.active {
@@ -785,6 +853,15 @@
             color: #ffffff;
             border-color: var(--primary);
             box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        }
+        
+        .size-chip.target-size {
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+        
+        .size-chip.target-size:not(.active) {
+            background: rgba(79, 70, 229, 0.04);
+            color: var(--primary);
         }
         
         /* Sort Dropdown */
@@ -1299,17 +1376,25 @@
             .insights-tabs {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .sticky-controls {
-                flex-wrap: wrap;
-            }
             .search-box-wrapper {
-                flex: 1 1 100%;
+                max-width: none;
             }
         }
         
         @media (max-width: 600px) {
             .layout-container {
-                padding: 1rem 1rem 2rem;
+                padding: 0.75rem 0.75rem 2rem;
+            }
+            .controls-top-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            .sort-select-wrapper {
+                width: 100%;
+            }
+            .sort-select {
+                width: 100%;
             }
             .products-grid {
                 grid-template-columns: 1fr;
@@ -1334,7 +1419,7 @@
             <div class="nav-actions">
                 <div class="live-indicator">
                     <span class="pulse-dot"></span>
-                    <span>2026.10.09 01:43 기준</span>
+                    <span>2026.10.09 14:58 기준</span>
                 </div>
                 <button class="nav-insight-btn" id="openInsightNavBtn" aria-label="가격 재고 분석 리포트">
                     <i class="fas fa-chart-pie"></i>
@@ -1417,33 +1502,43 @@
         
         <!-- Sticky Glassmorphism Controls -->
         <section class="sticky-controls" id="stickyControls">
-            <div class="search-box-wrapper">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" 
-                       id="searchInput" 
-                       class="search-input" 
-                       placeholder="상품명 검색..." 
-                       autocomplete="off">
-                <button class="search-clear-btn" id="searchClearBtn" aria-label="검색어 지우기">
-                    <i class="fas fa-times-circle"></i>
+            <div class="controls-top-row">
+                <div class="search-box-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           id="searchInput" 
+                           class="search-input" 
+                           placeholder="상품명 검색..." 
+                           autocomplete="off">
+                    <button class="search-clear-btn" id="searchClearBtn" aria-label="검색어 지우기">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
+                
+                <div class="sort-select-wrapper">
+                    <select class="sort-select" id="sortSelect" aria-label="정렬 기준">
+                        <option value="default">추천 기본순</option>
+                        <option value="discount-desc">할인율 높은순 🔥</option>
+                        <option value="price-asc">가격 낮은순</option>
+                        <option value="price-desc">가격 높은순</option>
+                        <option value="stock-desc">재고 많은순</option>
+                        <option value="stock-asc">재고 적은순</option>
+                    </select>
+                    <i class="fas fa-chevron-down sort-select-icon"></i>
+                </div>
+            </div>
+            
+            <div class="controls-size-row">
+                <button class="size-scroll-nav-btn left" id="sizeScrollLeftBtn" aria-label="이전 사이즈 보기" title="이전 사이즈">
+                    <i class="fas fa-chevron-left"></i>
                 </button>
-            </div>
-            
-            <div class="size-chips-wrapper" id="sizeChipsWrapper">
-                <button class="size-chip active" data-size="all">전체 사이즈</button>
-                <button class="size-chip" data-size="1단계">1단계</button><button class="size-chip" data-size="1호">1호</button><button class="size-chip" data-size="2호">2호</button><button class="size-chip" data-size="3단계">3단계</button><button class="size-chip" data-size="3호">3호</button><button class="size-chip" data-size="4단계">4단계</button><button class="size-chip" data-size="4호">4호</button><button class="size-chip" data-size="5호">5호</button><button class="size-chip" data-size="6호">6호</button><button class="size-chip" data-size="9호">9호</button><button class="size-chip" data-size="11호">11호</button><button class="size-chip" data-size="13호">13호</button><button class="size-chip" data-size="15호">15호</button><button class="size-chip" data-size="17호">17호</button><button class="size-chip" data-size="19호">19호</button><button class="size-chip" data-size="21호">21호</button><button class="size-chip" data-size="23호">23호</button><button class="size-chip" data-size="FREE">FREE</button><button class="size-chip" data-size="L">L</button><button class="size-chip" data-size="M">M</button><button class="size-chip" data-size="S">S</button><button class="size-chip" data-size="XL">XL</button>
-            </div>
-            
-            <div class="sort-select-wrapper">
-                <select class="sort-select" id="sortSelect" aria-label="정렬 기준">
-                    <option value="default">추천 기본순</option>
-                    <option value="discount-desc">할인율 높은순 🔥</option>
-                    <option value="price-asc">가격 낮은순</option>
-                    <option value="price-desc">가격 높은순</option>
-                    <option value="stock-desc">재고 많은순</option>
-                    <option value="stock-asc">재고 적은순</option>
-                </select>
-                <i class="fas fa-chevron-down sort-select-icon"></i>
+                <div class="size-chips-wrapper" id="sizeChipsWrapper">
+                    <button class="size-chip active" data-size="all">전체 사이즈</button>
+                    <button class="size-chip" data-size="1단계">1단계</button><button class="size-chip" data-size="1호">1호</button><button class="size-chip" data-size="2호">2호</button><button class="size-chip" data-size="3단계">3단계</button><button class="size-chip" data-size="3호">3호</button><button class="size-chip" data-size="4단계">4단계</button><button class="size-chip" data-size="4호">4호</button><button class="size-chip" data-size="5호">5호</button><button class="size-chip" data-size="6호">6호</button><button class="size-chip" data-size="9호">9호</button><button class="size-chip" data-size="11호">11호</button><button class="size-chip" data-size="13호">13호</button><button class="size-chip" data-size="15호">15호</button><button class="size-chip" data-size="17호">17호</button><button class="size-chip" data-size="19호">19호</button><button class="size-chip target-size" data-size="21호">🎯 21호</button><button class="size-chip target-size" data-size="23호">🎯 23호</button><button class="size-chip" data-size="FREE">FREE</button><button class="size-chip" data-size="L">L</button><button class="size-chip" data-size="M">M</button><button class="size-chip" data-size="S">S</button><button class="size-chip" data-size="XL">XL</button>
+                </div>
+                <button class="size-scroll-nav-btn right" id="sizeScrollRightBtn" aria-label="다음 사이즈 보기" title="다음 사이즈">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </section>
         
@@ -2414,7 +2509,73 @@
                     applyFilters();
                 });
             });
-            
+
+            // 4-1. 사이즈 칩 스크롤 내비게이션 (마우스 휠, 좌우 화살표, 드래그 스크롤)
+            const sizeChipsWrapper = document.getElementById('sizeChipsWrapper');
+            const sizeScrollLeftBtn = document.getElementById('sizeScrollLeftBtn');
+            const sizeScrollRightBtn = document.getElementById('sizeScrollRightBtn');
+
+            function updateSizeScrollButtons() {
+                if (!sizeChipsWrapper || !sizeScrollLeftBtn || !sizeScrollRightBtn) return;
+                const scrollLeft = sizeChipsWrapper.scrollLeft;
+                const maxScrollLeft = sizeChipsWrapper.scrollWidth - sizeChipsWrapper.clientWidth;
+                sizeScrollLeftBtn.disabled = scrollLeft <= 2;
+                sizeScrollRightBtn.disabled = scrollLeft >= maxScrollLeft - 2;
+            }
+
+            if (sizeChipsWrapper) {
+                // 마우스 휠(세로 휠)을 가로 스크롤로 매핑하여 데스크톱에서도 21호, 23호 등 손쉽게 탐색
+                sizeChipsWrapper.addEventListener('wheel', (e) => {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        sizeChipsWrapper.scrollLeft += e.deltaY;
+                        updateSizeScrollButtons();
+                    }
+                }, { passive: false });
+
+                sizeChipsWrapper.addEventListener('scroll', updateSizeScrollButtons, { passive: true });
+                window.addEventListener('resize', updateSizeScrollButtons, { passive: true });
+
+                // 마우스 드래그 가로 스크롤 지원
+                let isDown = false;
+                let startX, scrollLeftVal;
+                sizeChipsWrapper.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    sizeChipsWrapper.style.cursor = 'grabbing';
+                    startX = e.pageX - sizeChipsWrapper.offsetLeft;
+                    scrollLeftVal = sizeChipsWrapper.scrollLeft;
+                });
+                window.addEventListener('mouseup', () => {
+                    if (isDown) {
+                        isDown = false;
+                        if (sizeChipsWrapper) sizeChipsWrapper.style.cursor = 'default';
+                    }
+                });
+                sizeChipsWrapper.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - sizeChipsWrapper.offsetLeft;
+                    const walk = (x - startX) * 1.5;
+                    sizeChipsWrapper.scrollLeft = scrollLeftVal - walk;
+                    updateSizeScrollButtons();
+                });
+
+                // 초기 화살표 버튼 상태
+                setTimeout(updateSizeScrollButtons, 150);
+            }
+
+            if (sizeScrollLeftBtn && sizeChipsWrapper) {
+                sizeScrollLeftBtn.addEventListener('click', () => {
+                    sizeChipsWrapper.scrollBy({ left: -260, behavior: 'smooth' });
+                });
+            }
+
+            if (sizeScrollRightBtn && sizeChipsWrapper) {
+                sizeScrollRightBtn.addEventListener('click', () => {
+                    sizeChipsWrapper.scrollBy({ left: 260, behavior: 'smooth' });
+                });
+            }
+
             // 5. 정렬 셀렉트
             const sortSelect = document.getElementById('sortSelect');
             if (sortSelect) {

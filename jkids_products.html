@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jkids 프리미엄 가격 레이더 - 실시간 아동복 가격 추적 및 재고 변동 알림">
-    <title>JKIDS PRICE RADAR - 2026.10.10 22:49</title>
+    <title>JKIDS PRICE RADAR - 2026.10.12 01:34</title>
     
     <!-- Modern Web Fonts (Pretendard & Inter) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -931,9 +931,6 @@
         }
         
         .product-card {
-            content-visibility: auto;
-            contain-intrinsic-size: 300px 560px;
-            will-change: transform;
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
@@ -1419,7 +1416,7 @@
             <div class="nav-actions">
                 <div class="live-indicator">
                     <span class="pulse-dot"></span>
-                    <span>2026.10.10 22:49 기준</span>
+                    <span>2026.10.12 01:34 기준</span>
                 </div>
                 <button class="nav-insight-btn" id="openInsightNavBtn" aria-label="가격 재고 분석 리포트">
                     <i class="fas fa-chart-pie"></i>
@@ -1460,7 +1457,7 @@
                         <span class="insight-label"><i class="fas fa-layer-group"></i> 전체 상품</span>
                         <span class="insight-tag tag-all">ALL</span>
                     </div>
-                    <div class="insight-value" id="statAllCount">11,710</div>
+                    <div class="insight-value" id="statAllCount">11,646</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="sale">
@@ -1468,7 +1465,7 @@
                         <span class="insight-label"><i class="fas fa-fire" style="color: #ef4444;"></i> 50%↑ 슈퍼세일</span>
                         <span class="insight-tag tag-sale">HOT</span>
                     </div>
-                    <div class="insight-value" id="statSaleCount">1,580</div>
+                    <div class="insight-value" id="statSaleCount">1,560</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="urgent">
@@ -1476,7 +1473,7 @@
                         <span class="insight-label"><i class="fas fa-bolt" style="color: #f59e0b;"></i> 품절임박 (1~3개)</span>
                         <span class="insight-tag tag-urgent">LAST</span>
                     </div>
-                    <div class="insight-value" id="statUrgentCount">801</div>
+                    <div class="insight-value" id="statUrgentCount">793</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="drop">
@@ -2174,16 +2171,10 @@
             }
             
             const allCanvases = document.querySelectorAll('canvas[id^="chart-"]');
-            const vHeight = window.innerHeight || document.documentElement.clientHeight;
-            
             allCanvases.forEach(canvas => {
-                chartObserver.observe(canvas);
-                const rect = canvas.getBoundingClientRect();
-                // 뷰포트 내(또는 인접한 영역)에 이미 존재하는 카드는 즉시 렌더링 (탭 전환 지연/누락 완벽 방지)
-                if (rect.top < vHeight + 350 && rect.bottom > -350) {
-                    if (!STATE.charts.has(canvas.id)) {
-                        renderChart(canvas);
-                    }
+                if (!canvas._observed) {
+                    canvas._observed = true;
+                    chartObserver.observe(canvas);
                 }
             });
         }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jkids 프리미엄 가격 레이더 - 실시간 아동복 가격 추적 및 재고 변동 알림">
-    <title>JKIDS PRICE RADAR - 2026.10.14 02:21</title>
+    <title>JKIDS PRICE RADAR - 2026.10.14 22:49</title>
     
     <!-- Modern Web Fonts (Pretendard & Inter) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -940,6 +940,8 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            content-visibility: auto;
+            contain-intrinsic-size: 380px;
         }
         
         .product-card:hover {
@@ -1415,7 +1417,7 @@
             <div class="nav-actions">
                 <div class="live-indicator">
                     <span class="pulse-dot"></span>
-                    <span>2026.10.14 02:21 기준</span>
+                    <span>2026.10.14 22:49 기준</span>
                 </div>
                 <button class="nav-insight-btn" id="openInsightNavBtn" aria-label="가격 재고 분석 리포트">
                     <i class="fas fa-chart-pie"></i>
@@ -1456,7 +1458,7 @@
                         <span class="insight-label"><i class="fas fa-layer-group"></i> 전체 상품</span>
                         <span class="insight-tag tag-all">ALL</span>
                     </div>
-                    <div class="insight-value" id="statAllCount">11,862</div>
+                    <div class="insight-value" id="statAllCount">11,863</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="sale">
@@ -1464,7 +1466,7 @@
                         <span class="insight-label"><i class="fas fa-fire" style="color: #ef4444;"></i> 50%↑ 슈퍼세일</span>
                         <span class="insight-tag tag-sale">HOT</span>
                     </div>
-                    <div class="insight-value" id="statSaleCount">1,552</div>
+                    <div class="insight-value" id="statSaleCount">1,539</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="urgent">
@@ -1472,7 +1474,7 @@
                         <span class="insight-label"><i class="fas fa-bolt" style="color: #f59e0b;"></i> 품절임박 (1~3개)</span>
                         <span class="insight-tag tag-urgent">LAST</span>
                     </div>
-                    <div class="insight-value" id="statUrgentCount">824</div>
+                    <div class="insight-value" id="statUrgentCount">800</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="drop">
@@ -1480,7 +1482,7 @@
                         <span class="insight-label"><i class="fas fa-chart-line-down" style="color: #10b981;"></i> 가격인하 상품</span>
                         <span class="insight-tag tag-drop">DOWN</span>
                     </div>
-                    <div class="insight-value" id="statDropCount">798</div>
+                    <div class="insight-value" id="statDropCount">2,311</div>
                 </div>
             </div>
         </section>
@@ -1881,13 +1883,22 @@
                 filtered = filtered.filter(p => p.price_change || (p.price_series && p.price_series.length > 1 && p.price_series[p.price_series.length - 1].price < p.price_series[0].price));
             }
             
-            // 2. 검색어 필터
+            // 2. 검색어 필터 (스마트 다차원 벡터 검색: 공백 무시 + 다중 토큰 AND 매칭)
             if (STATE.filters.search) {
-                const q = STATE.filters.search.toLowerCase().trim();
-                filtered = filtered.filter(p => 
-                    p.name.toLowerCase().includes(q) || 
-                    (p.color && p.color.toLowerCase().includes(q))
-                );
+                const rawQ = STATE.filters.search.toLowerCase().trim();
+                const cleanQ = rawQ.replace(/\s+/g, '');
+                const tokens = rawQ.split(/\s+/).filter(t => t.length > 0);
+                
+                filtered = filtered.filter(p => {
+                    const name = (p.name || '').toLowerCase();
+                    const color = (p.color || '').toLowerCase();
+                    const size = (p.size || '').toLowerCase();
+                    const combined = `${name} ${color} ${size}`;
+                    const combinedNoSpace = combined.replace(/\s+/g, '');
+                    
+                    if (combinedNoSpace.includes(cleanQ)) return true;
+                    return tokens.every(tok => combined.includes(tok) || combinedNoSpace.includes(tok));
+                });
             }
             
             // 3. 사이즈 필터 (다중 선택 지원)
@@ -1926,8 +1937,11 @@
             // 그리드 초기화
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
+            const sentinel = document.getElementById('scrollSentinel');
+            if (sentinel) sentinel.style.display = 'block';
             
             if (filtered.length === 0) {
+                if (sentinel) sentinel.style.display = 'none';
                 grid.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">🔍</div>
@@ -1978,7 +1992,11 @@
             const end = start + STATE.itemsPerPage;
             const newProducts = STATE.filteredProducts.slice(start, end);
             
-            if (newProducts.length === 0) return;
+            if (newProducts.length === 0) {
+                const sentinel = document.getElementById('scrollSentinel');
+                if (sentinel) sentinel.style.display = 'none';
+                return;
+            }
             
             const grid = document.getElementById('productsGrid');
             const fragment = document.createDocumentFragment();

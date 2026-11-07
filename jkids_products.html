@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Jkids 프리미엄 가격 레이더 - 실시간 아동복 가격 추적 및 재고 변동 알림">
-    <title>JKIDS PRICE RADAR - 2026.11.06 23:16</title>
+    <title>JKIDS PRICE RADAR - 2026.11.07 23:21</title>
     
     <!-- Modern Web Fonts (Pretendard & Inter) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -1652,7 +1652,7 @@
             <div class="nav-actions">
                 <div class="live-indicator">
                     <span class="pulse-dot"></span>
-                    <span>2026.11.06 23:16 기준</span>
+                    <span>2026.11.07 23:21 기준</span>
                 </div>
                 <button class="nav-insight-btn" id="openInsightNavBtn" aria-label="가격 재고 분석 리포트">
                     <i class="fas fa-chart-pie"></i>
@@ -1693,7 +1693,7 @@
                         <span class="insight-label"><i class="fas fa-layer-group"></i> 전체 상품</span>
                         <span class="insight-tag tag-all">ALL</span>
                     </div>
-                    <div class="insight-value" id="statAllCount">16,637</div>
+                    <div class="insight-value" id="statAllCount">14,534</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="sale">
@@ -1701,7 +1701,7 @@
                         <span class="insight-label"><i class="fas fa-fire" style="color: #ef4444;"></i> 50%↑ 슈퍼세일</span>
                         <span class="insight-tag tag-sale">HOT</span>
                     </div>
-                    <div class="insight-value" id="statSaleCount">1,454</div>
+                    <div class="insight-value" id="statSaleCount">1,022</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="urgent">
@@ -1709,7 +1709,7 @@
                         <span class="insight-label"><i class="fas fa-bolt" style="color: #f59e0b;"></i> 품절임박 (1~3개)</span>
                         <span class="insight-tag tag-urgent">LAST</span>
                     </div>
-                    <div class="insight-value" id="statUrgentCount">904</div>
+                    <div class="insight-value" id="statUrgentCount">714</div>
                 </div>
                 
                 <div class="insight-tab" data-tab="drop">
@@ -1717,7 +1717,7 @@
                         <span class="insight-label"><i class="fas fa-chart-line-down" style="color: #10b981;"></i> 가격인하 상품</span>
                         <span class="insight-tag tag-drop">DOWN</span>
                     </div>
-                    <div class="insight-value" id="statDropCount">3,457</div>
+                    <div class="insight-value" id="statDropCount">3,184</div>
                 </div>
             </div>
         </section>
@@ -1767,7 +1767,7 @@
                 </button>
                 <div class="size-chips-wrapper" id="sizeChipsWrapper">
                     <button class="size-chip active" data-size="all">전체 사이즈</button>
-                    <button class="size-chip" data-size="1단계">1단계</button><button class="size-chip" data-size="1호">1호</button><button class="size-chip" data-size="2단계">2단계</button><button class="size-chip" data-size="2호">2호</button><button class="size-chip" data-size="3단계">3단계</button><button class="size-chip" data-size="4단계">4단계</button><button class="size-chip" data-size="9호">9호</button><button class="size-chip" data-size="11호">11호</button><button class="size-chip" data-size="13호">13호</button><button class="size-chip" data-size="15호">15호</button><button class="size-chip" data-size="17호">17호</button><button class="size-chip" data-size="19호">19호</button><button class="size-chip target-size" data-size="21호">🎯 21호</button><button class="size-chip target-size" data-size="23호">🎯 23호</button><button class="size-chip" data-size="FREE">FREE</button><button class="size-chip" data-size="L">L</button><button class="size-chip" data-size="M">M</button><button class="size-chip" data-size="S">S</button><button class="size-chip" data-size="XL">XL</button>
+                    <button class="size-chip" data-size="1단계">1단계</button><button class="size-chip" data-size="2단계">2단계</button><button class="size-chip" data-size="2호">2호</button><button class="size-chip" data-size="3단계">3단계</button><button class="size-chip" data-size="4단계">4단계</button><button class="size-chip" data-size="9호">9호</button><button class="size-chip" data-size="11호">11호</button><button class="size-chip" data-size="13호">13호</button><button class="size-chip" data-size="15호">15호</button><button class="size-chip" data-size="17호">17호</button><button class="size-chip" data-size="19호">19호</button><button class="size-chip target-size" data-size="21호">🎯 21호</button><button class="size-chip target-size" data-size="23호">🎯 23호</button><button class="size-chip" data-size="FREE">FREE</button><button class="size-chip" data-size="L">L</button><button class="size-chip" data-size="M">M</button><button class="size-chip" data-size="S">S</button><button class="size-chip" data-size="XL">XL</button><button class="size-chip" data-size="XXL">XXL</button><button class="size-chip" data-size="성인">성인</button><button class="size-chip" data-size="키즈">키즈</button>
                 </div>
                 <button class="size-scroll-nav-btn right" id="sizeScrollRightBtn" aria-label="다음 사이즈 보기" title="다음 사이즈">
                     <i class="fas fa-chevron-right"></i>
@@ -2013,7 +2013,8 @@
                 if (window.STANDALONE_PAYLOAD) {
                     RAW_PAYLOAD = window.STANDALONE_PAYLOAD;
                 } else {
-                    const resp = await fetch('./data/products.json');
+                    const cacheBuster = Date.now();
+                    const resp = await fetch('./data/products.json?v=' + cacheBuster, { cache: 'no-cache' });
                     if (!resp.ok) throw new Error('HTTP ' + resp.status);
                     RAW_PAYLOAD = await resp.json();
                 }
@@ -2182,17 +2183,37 @@
                 filtered = filtered.filter(p => p.price_change || (p.price_series && p.price_series.length > 1 && p.price_series[p.price_series.length - 1].price < p.price_series[0].price));
             }
             
-            // 2. 검색어 필터 (스마트 다차원 벡터 검색: 공백 무시 + 다중 토큰 AND 매칭)
+            // 2. 검색어 필터 (스마트 다차원 벡터 검색: 공백 무시 + 다중 토큰 AND 매칭 + 사이즈 범위 오매칭 방지)
             if (STATE.filters.search) {
                 const rawQ = STATE.filters.search.toLowerCase().trim();
                 const cleanQ = rawQ.replace(/\s+/g, '');
                 const tokens = rawQ.split(/\s+/).filter(t => t.length > 0);
                 
+                // 상품명에서 (11호~23호), (5호-17호) 등 사이즈 범위 표기 제거용 정규식
+                const sizeRangeRegex = /\(?\d{1,2}호?\s*[~-]\s*\d{1,2}호?\)?/g;
+                const sizeTokenRegex = /^(\d{1,2}호)$/;
+                const hasSizeToken = tokens.some(tok => sizeTokenRegex.test(tok.replace(/\s+/g, '')));
+                
                 filtered = filtered.filter(p => {
-                    const name = (p.name || '').toLowerCase();
+                    const rawName = (p.name || '').toLowerCase();
+                    const cleanName = rawName.replace(sizeRangeRegex, '').trim();
                     const color = (p.color || '').toLowerCase();
                     const size = (p.size || '').toLowerCase();
-                    const combined = `${name} ${color} ${size}`;
+                    
+                    // 호수 검색어가 포함된 경우: 옵션의 실제 사이즈 또는 순수 상품명과 정확 매칭
+                    if (hasSizeToken) {
+                        return tokens.every(tok => {
+                            const cleanTok = tok.replace(/\s+/g, '');
+                            if (sizeTokenRegex.test(cleanTok)) {
+                                return size === cleanTok || size.includes(cleanTok) || cleanName.includes(cleanTok);
+                            }
+                            const combined = `${rawName} ${color} ${size}`;
+                            const combinedNoSpace = combined.replace(/\s+/g, '');
+                            return combined.includes(tok) || combinedNoSpace.includes(cleanTok);
+                        });
+                    }
+                    
+                    const combined = `${rawName} ${color} ${size}`;
                     const combinedNoSpace = combined.replace(/\s+/g, '');
                     
                     if (combinedNoSpace.includes(cleanQ)) return true;
